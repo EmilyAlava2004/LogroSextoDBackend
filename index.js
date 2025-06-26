@@ -9,6 +9,7 @@ import './models/TaskModel.js';
 import "./models/TaskModel.js";
 import "./models/CategoryModel.js";
 import "./models/LocationModel.js";
+import AuthRouter from './router/AuthRouter.js';
 import { RouterLocation } from './router/LocationRouter.js';
 import { RouterCategory } from './router/CategoryRouter.js';
 
@@ -17,11 +18,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use('/api/auth',AuthRouter);
 
-app.use('/api', RouterUsuer);
-app.use('/api', RouterCategory);
-app.use('/api', RouterLocation);
-app.use('/api', RouterTask);
+// app.use('/api', RouterUsuer);
+// app.use('/api', RouterCategory);
+// app.use('/api', RouterLocation);
+// app.use('/api', RouterTask);
 
 app.use(cors({
     origin: 'http://localhost:8100', // o la URL de tu frontend

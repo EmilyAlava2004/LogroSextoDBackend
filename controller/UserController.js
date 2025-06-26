@@ -26,48 +26,9 @@ export const getOneUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-export const createUsers = async (req, res) => {
-  try {
-    const { user, email, password, numero } = req.body;
-    if (!(user &&  email &&  password && numero)) {
-      res.status(400).json({ message: "all input is required" });
-    }
-    // check if email already exist
-    // Validate if email exist in our database
-    const oldUser = await UserModel.findOne({ where: { email: email } });
-    if (oldUser) {
-      return res.status(409).json("email already exist");
-    }
-    //Encrypt user password
-   const encryptedPassword = await bcrypt.hash(password.toString(),10);
-    // Create user in our database
-    const users = await UserModel.create({
-      user,
-      email: email.toLowerCase(), // sanitize: convert email to lowercase
-      password: encryptedPassword,
-      numero,
-    });
-    // Create token
-    const token = jwt.sign({ user_id: users.id, email }, TOKEN_KEY, {
-      expiresIn: "1h",
-    });
-    // save user token
-    // users.token = token;
-    const userData = {
-      id: newUser.id,
-      user: newUser.user,
-      email: newUser.email,
-      numero: newUser.numero,
-    };
-    res.status(201).json({ 
-      users: userData, // Para compatibilidad con el frontend
-      dataUser: userData, // Consistencia con login
-      token: token 
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+
+
+
 export const updateUsers = async (req, res) => {
   const { user } = req.body;
   if (!(user)) {
@@ -125,16 +86,18 @@ export const updateUsersPassword = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-export const deleteUsers = async (req, res) => {
-  const user = await UserModel.findOne({ where: { id: req.params.id } });
-  if (user) {
-    user.set({ ...user, state: false });
-    await user.save();
-    res.status(200).json({ message: "delete" });
-  } else {
-    res.status(404).json({ message: "type not found" });
-  }
-};
+
+// export const deleteUsers = async (req, res) => {
+//   const user = await UserModel.findOne({ where: { id: req.params.id } });
+//   if (user) {
+//     user.set({ ...user, state: false });
+//     await user.save();
+//     res.status(200).json({ message: "delete" });
+//   } else {
+//     res.status(404).json({ message: "type not found" });
+//   }
+// };
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
