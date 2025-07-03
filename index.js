@@ -20,7 +20,7 @@ app.use(cors());
 
 app.use('/api/auth',AuthRouter);
 
-// app.use('/api', RouterUsuer);
+app.use('/api', RouterUsuer);
 // app.use('/api', RouterCategory);
 // app.use('/api', RouterLocation);
 // app.use('/api', RouterTask);

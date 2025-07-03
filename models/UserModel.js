@@ -7,11 +7,11 @@ export const UserModel = sequelize.define('User', {
     autoIncrement: true,
     primaryKey: true
   },
-  nombre: {
+  user: {
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  correo: {
+  email: {
     type: DataTypes.STRING(100),
     allowNull: false,
     unique: true,
@@ -19,15 +19,20 @@ export const UserModel = sequelize.define('User', {
       isEmail: true
     }
   },
-  contraseña: {
+  password: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  rol: {
+  numero: {
     type: DataTypes.STRING(20),
-    defaultValue: 'usuario' // opcional: admin, usuario, etc.
+    allowNull: false
+  },
+  state: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+    allowNull: false
   }
 }, {
-  tableName: 'usuarios', // nombre de la tabla en MySQL
-  timestamps: true       // crea createdAt y updatedAt
+  tableName: 'user',
+  timestamps: true
 });

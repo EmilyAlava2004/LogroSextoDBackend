@@ -1,20 +1,33 @@
 import express from 'express';
-// import { login,updateUsersPassword, updateUsersEmail, getUsers,updateUsers,deleteUsers,getOneUser} from '../controller/UserController.js';
-import  {verifyToken}  from '../middleware/auth.js';
-const rotuer = express.Router();
-// rotuer.get('/user',verifyToken, getUsers);
-// rotuer.get('/user/:id',verifyToken, getOneUser);
+import { 
+  login, 
+  updateUsersPassword, 
+  updateUsersEmail, 
+  getUsers, 
+  updateUsers, 
+  getOneUser 
+} from '../controller/UserController.js';
+import { verifyToken } from '../middleware/auth.js';
+import { 
+  validateRegister, 
+  validateLogin, 
+  validateUpdateUser, 
+  validateUpdateEmail, 
+  validateUpdatePassword 
+} from '../middleware/validatorMiddleware.js';
+import { registerUser } from '../controller/AuthController.js';
 
-// router.post('/register', [
-//   body('name').notEmpty().withMessage('El nombre es obligatorio'),
-//   body('email').isEmail().withMessage('Correo inválido'),
-//   body('password').isLength({ min: 6 }).withMessage('Mínimo 6 caracteres')
-// ], runValidations, register);
+const router = express.Router();
 
-// rotuer.put('/user/:id',verifyToken, updateUsers);
-// rotuer.delete('/user/:id', verifyToken, deleteUsers);
-// rotuer.post('/login',login);
-// rotuer.put('/user/email/:id',verifyToken, updateUsersEmail);
-// rotuer.put('/user/password/:id',verifyToken, updateUsersPassword);
-export const RouterUsuer = rotuer;
+// Rutas públicas
+router.post('/register', validateRegister, registerUser);
+router.post('/login', validateLogin, login);
 
+// Rutas protegidas
+router.get('/user', verifyToken, getUsers);
+router.get('/user/:id', verifyToken, getOneUser);
+router.put('/user/:id', verifyToken, validateUpdateUser, updateUsers);
+router.put('/user/email/:id', verifyToken, validateUpdateEmail, updateUsersEmail);
+router.put('/user/password/:id', verifyToken, validateUpdatePassword, updateUsersPassword);
+
+export const RouterUsuer = router;

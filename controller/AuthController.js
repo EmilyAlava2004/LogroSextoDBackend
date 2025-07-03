@@ -4,44 +4,48 @@ import { UserModel } from '../models/UserModel.js';
 import { TOKEN_KEY } from '../config/config.js';
 
 export const registerUser = async (req, res) => {
-  const { nombre, correo, contraseña } = req.body;
+  const { user, email, password, numero } = req.body;
 
   try {
     // Validación: correo ya registrado
-    const usuarioExistente = await UserModel.findOne({ where: { correo } });
+    const usuarioExistente = await UserModel.findOne({ where: { email: email.toLowerCase() } });
     if (usuarioExistente) {
       return res.status(400).json({ mensaje: 'El correo ya está registrado' });
     }
 
     // Encriptar contraseña
-    const hash = await bcrypt.hash(contraseña, 10);
+    const hash = await bcrypt.hash(password.toString(), 10);
 
     // Crear nuevo usuario
     const nuevoUsuario = await UserModel.create({
-      nombre,
-      correo,
-      contraseña: hash
+      user,
+      email: email.toLowerCase(),
+      password: hash,
+      numero,
+      state: true // Asegurar que el usuario esté activo por defecto
     });
 
     // Generar token JWT
     const token = jwt.sign(
-      { id: nuevoUsuario.id, correo: nuevoUsuario.correo },
+      { user_id: nuevoUsuario.id, email: nuevoUsuario.email },
       TOKEN_KEY,
-      { expiresIn: '2h' }
+      { expiresIn: '24h' }
     );
 
     // Respuesta exitosa
     return res.status(201).json({
+      success: true,
       mensaje: 'Usuario registrado exitosamente',
-      usuario: {
+      dataUser: {
         id: nuevoUsuario.id,
-        nombre: nuevoUsuario.nombre,
-        correo: nuevoUsuario.correo
+        user: nuevoUsuario.user,
+        email: nuevoUsuario.email,
+        numero: nuevoUsuario.numero
       },
       token
     });
   } catch (error) {
     console.error('Error en registerUser:', error);
-    return res.status(500).json({ mensaje: 'Error interno del servidor' });
+    return res.status(500).json({ mensaje: 'Error interno del servidor', error: error.message });
   }
 };
